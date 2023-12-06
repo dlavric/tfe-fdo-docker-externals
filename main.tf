@@ -55,7 +55,7 @@ resource "aws_s3_object" "object" {
 
 # Add my TFE FDO license to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket_license" {
-  bucket = "daniela-software"
+  bucket = "daniela-fdo-software"
 
   tags = {
     Name        = "Daniela TFE FDO License Bucket"
@@ -230,7 +230,7 @@ resource "aws_instance" "instance" {
   user_data = templatefile("fdo_ent.yaml", {
     license      = "fdo-license.txt",
     tfe_version  = var.tfe_version
-    tfe_hostname = aws_route53_record.www.name
+    tfe_hostname = var.tfe_hostname
 
   })
 

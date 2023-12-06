@@ -14,3 +14,15 @@ What do I need:
 - [ ] Add your license file to the repository folder and ignore it in the gitignore file 
 - [ ] Create TFE initial user
 - [ ] External Services: Postgres & S3 bucket 
+
+
+
+
+
+
+```shell
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_SESSION_TOKEN=
+export AWS_REGION="eu-west-1" 
+```

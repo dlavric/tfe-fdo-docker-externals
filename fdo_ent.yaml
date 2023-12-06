@@ -10,7 +10,7 @@ write_files:
             TFE_HOSTNAME: ${tfe_hostname}
             TFE_ENCRYPTION_PASSWORD: "encpassword"
             TFE_OPERATIONAL_MODE: "disk"
-            TFE_DISK_CACHE_VOLUME_NAME: ${COMPOSE_PROJECT_NAME}_terraform-enterprise-cache
+            TFE_DISK_CACHE_VOLUME_NAME: daniela-project-compose_terraform-enterprise-cache
             TFE_TLS_CERT_FILE: /etc/ssl/private/terraform-enterprise/cert.pem
             TFE_TLS_KEY_FILE: /etc/ssl/private/terraform-enterprise/key.pem
             TFE_TLS_CA_BUNDLE_FILE: /etc/ssl/private/terraform-enterprise/bundle.pem
@@ -88,7 +88,7 @@ write_files:
        sudo aws s3 cp s3://daniela-fdo-bucket/ssl-certs/private_key_pem tfe-fdo/certs/key.pem
 
        #copy the TFE FDO license to the tfe-fdo/ folder
-       sudo aws s3 cp s3://daniela-software/fdo-license.txt tfe-fdo/fdo-license.txt
+       sudo aws s3 cp s3://daniela-fdo-software/fdo-license.txt tfe-fdo/fdo-license.txt
 
        #login to the Terraform Enterprise container image registry
        cat tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
