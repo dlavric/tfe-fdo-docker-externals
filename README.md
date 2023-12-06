@@ -16,9 +16,13 @@ What do I need:
 - [ ] External Services: Postgres & S3 bucket 
 
 
+- Create a file `variables.auto.tfvars` with the following content
+```hcl
+tfe_hostname = "daniela-docker"
+tfe_version  = "v202312-1"
+```
 
-
-
+- Export AWS environment variables
 
 ```shell
 export AWS_ACCESS_KEY_ID=
