@@ -10,6 +10,7 @@ What do I need:
 - [ ] Valid certificates created with Let's encrypt, [see this Github repo](https://github.com/dlavric/create-certificates) that will be incorporated here
 - [ ] Automate the installation of Docker on the EC2 instance
 - [ ] Automate the adding of the certificates to the `/certs` folder
-- [ ] Automate pulling the Docker container and install TFE with the `compose.yaml` file 
+- [ ] Automate pulling the Docker container and install TFE with the `compose.yaml` file
+- [ ] Add your license file to the repository folder and ignore it in the gitignore file 
 - [ ] Create TFE initial user
-- [ ] External Services: Postgres & S3 bucket   
+- [ ] External Services: Postgres & S3 bucket 

@@ -1,18 +1,15 @@
 # DNS
 data "aws_route53_zone" "zone" {
-  name = "bg.hashicorp-success.com"
+  name = "tf-support.hashicorpdemo.com"
 }
+
 
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.zone.zone_id
-  name    = "daniela.${data.aws_route53_zone.zone.name}"
+  name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
   type    = "A"
   ttl     = "300"
-  records = [data.aws_instance.public-dns.public_ip]
-}
-
-data "aws_route53_zone" "zone" {
-  name = "tf-support.hashicorpdemo.com"
+  records = [aws_eip.eip.public_ip]
 }
 
 # Create Certificates
@@ -26,9 +23,9 @@ resource "acme_registration" "reg" {
 }
 
 resource "acme_certificate" "certificate" {
-  account_key_pem           = acme_registration.reg.account_key_pem
-  common_name               = "daniela-docker.${data.aws_route53_zone.zone.name}"
-  subject_alternative_names = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
+  account_key_pem              = acme_registration.reg.account_key_pem
+  common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
   disable_complete_propagation = true
 
   dns_challenge {
@@ -54,6 +51,22 @@ resource "aws_s3_object" "object" {
   bucket   = aws_s3_bucket.s3bucket.bucket
   key      = "ssl-certs/${each.key}"
   content  = lookup(acme_certificate.certificate, "${each.key}")
+}
+
+# Add my TFE FDO license to a S3 Bucket
+resource "aws_s3_bucket" "s3bucket_license" {
+  bucket = "daniela-software"
+
+  tags = {
+    Name        = "Daniela TFE FDO License Bucket"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_object" "object_license" {
+  bucket = aws_s3_bucket.s3bucket_license.bucket
+  key    = "fdo-license.txt"
+  source = "fdo-license.txt"
 }
 
 # Create network
@@ -214,10 +227,12 @@ resource "aws_instance" "instance" {
     volume_size = 50
   }
 
-  #   user_data = templatefile("terraform_ent.yaml", {
-  #     #consul_bootstrap_expect = var.consul_server_count,
-  #     license = "license.rli"
-  #   })
+  user_data = templatefile("fdo_ent.yaml", {
+    license      = "fdo-license.txt",
+    tfe_version  = var.tfe_version
+    tfe_hostname = aws_route53_record.www.name
+
+  })
 
   network_interface {
     network_interface_id = aws_network_interface.nic.id
