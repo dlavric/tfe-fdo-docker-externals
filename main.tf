@@ -6,9 +6,11 @@ data "aws_route53_zone" "zone" {
 
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.zone.zone_id
-  name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  name    = "fdo-docker.${data.aws_route53_zone.zone.name}"
+  #name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
   type    = "A"
   ttl     = "300"
+  #records = ["34.253.52.28"]
   records = [aws_eip.eip.public_ip]
 }
 
@@ -19,13 +21,16 @@ resource "tls_private_key" "private_key" {
 
 resource "acme_registration" "reg" {
   account_key_pem = tls_private_key.private_key.private_key_pem
-  email_address   = "daniela@hashicorp.com"
+  email_address   = "dededanutza@gmail.com"
+  #email_address   = "daniela@hashicorp.com"
 }
 
 resource "acme_certificate" "certificate" {
   account_key_pem              = acme_registration.reg.account_key_pem
-  common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
-  subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
+  common_name                  = "fdo-docker.${data.aws_route53_zone.zone.name}"
+  subject_alternative_names    = ["fdo-docker.${data.aws_route53_zone.zone.name}"]
+  #common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  #subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
   disable_complete_propagation = true
 
   dns_challenge {
@@ -38,7 +43,7 @@ resource "acme_certificate" "certificate" {
 
 # Add my certificates to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket" {
-  bucket = "daniela-fdo-bucket"
+  bucket = "daniela-fdo-certs"
 
   tags = {
     Name        = "Daniela FDO Bucket"
@@ -55,10 +60,10 @@ resource "aws_s3_object" "object" {
 
 # Add my TFE FDO license to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket_license" {
-  bucket = "daniela-fdo-software"
+  bucket = "daniela-fdo-license"
 
   tags = {
-    Name        = "Daniela TFE FDO License Bucket"
+    Name        = "Daniela FDO License"
     Environment = "Dev"
   }
 }
@@ -110,6 +115,11 @@ resource "aws_route_table" "route" {
   }
 }
 
+resource "aws_route_table_association" "route_association" {
+  subnet_id      = aws_subnet.publicsub.id
+  route_table_id = aws_route_table.route.id
+}
+
 resource "aws_security_group" "securitygp" {
 
   vpc_id = aws_vpc.vpc.id
@@ -149,10 +159,10 @@ resource "aws_network_interface" "nic" {
   security_groups = [aws_security_group.securitygp.id]
 }
 
-resource "aws_network_interface_sg_attachment" "sg_attachment" {
-  security_group_id    = aws_security_group.securitygp.id
-  network_interface_id = aws_instance.instance.primary_network_interface_id
-}
+# resource "aws_network_interface_sg_attachment" "sg_attachment" {
+#   security_group_id    = aws_security_group.securitygp.id
+#   network_interface_id = aws_instance.instance.primary_network_interface_id
+# }
 
 resource "aws_eip" "eip" {
   instance = aws_instance.instance.id
