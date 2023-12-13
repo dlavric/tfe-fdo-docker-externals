@@ -4,9 +4,9 @@ write_files:
       name: terraform-enterprise
       services:
         tfe:
-          image: terraform-enterprise-beta.terraform.io/terraform-enterprise:${tfe_version}
+          image: images.releases.hashicorp.com/hashicorp/terraform-enterprise:${tfe_version}
           environment:
-            TFE_LICENSE_PATH: /var/tmp/tfe-fdo/fdo-license.txt
+            TFE_LICENSE_PATH: /opt/tfe-fdo/fdo-license.txt
             TFE_HOSTNAME: ${tfe_hostname}
             TFE_ENCRYPTION_PASSWORD: "encpassword"
             TFE_OPERATIONAL_MODE: "disk"
@@ -32,8 +32,8 @@ write_files:
               source: ./certs
               target: /etc/ssl/private/terraform-enterprise
             - type: bind
-              source: /root/tfe-fdo
-              target: /var/tmp/tfe-fdo
+              source: /opt/tfe-fdo
+              target: /opt/tfe-fdo
             - type: volume
               source: terraform-enterprise
               target: /var/lib/terraform-enterprise
@@ -77,26 +77,31 @@ write_files:
        until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to copy certs" ; sleep 3 ; done 
 
        #create a new directory dedicated to tfe and to add the certs
-       mkdir -p tfe-fdo/certs
+       mkdir -p /opt/tfe-fdo/certs
 
        #install awscli to get the certs from S3 bucket
        sudo apt-get -y install awscli
 
        #copy the certs from S3 locally, to my tfe-fdo/certs folder
-       sudo aws s3 cp s3://daniela-fdo-bucket/ssl-certs/certificate_pem tfe-fdo/certs/cert.pem
-       sudo aws s3 cp s3://daniela-fdo-bucket/ssl-certs/issuer_pem tfe-fdo/certs/bundle.pem
-       sudo aws s3 cp s3://daniela-fdo-bucket/ssl-certs/private_key_pem tfe-fdo/certs/key.pem
+       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
+       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
+       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
 
        #copy the TFE FDO license to the tfe-fdo/ folder
-       sudo aws s3 cp s3://daniela-fdo-software/fdo-license.txt tfe-fdo/fdo-license.txt
+       sudo aws s3 cp s3://daniela-fdo-license/fdo-license.txt /opt/tfe-fdo/fdo-license.txt
 
        #login to the Terraform Enterprise container image registry
-       cat tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
+       cat /opt/tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
 
        #pull the TFE image from the registry
-       docker pull images.releases.hashicorp.com/hashicorp/terraform-enterprise:<v202312-1>
+       docker pull images.releases.hashicorp.com/hashicorp/terraform-enterprise:v202312-1
 
+       #copy compose file
+       cp /var/tmp/compose.yaml /opt/tfe-fdo
+ 
        #spin up TFE
+       pushd /opt/tfe-fdo
+       #mkdir -p /root/tfe-fdo
        docker compose up --detach
     permissions: '0750'
     path: /var/tmp/install-tfe.sh

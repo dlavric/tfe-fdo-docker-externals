@@ -6,8 +6,8 @@ data "aws_route53_zone" "zone" {
 
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.zone.zone_id
-  name    = "fdo-docker.${data.aws_route53_zone.zone.name}"
-  #name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  #name    = "fdo-docker.${data.aws_route53_zone.zone.name}"
+  name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
   type    = "A"
   ttl     = "300"
   #records = ["34.253.52.28"]
@@ -21,16 +21,16 @@ resource "tls_private_key" "private_key" {
 
 resource "acme_registration" "reg" {
   account_key_pem = tls_private_key.private_key.private_key_pem
-  email_address   = "dededanutza@gmail.com"
-  #email_address   = "daniela@hashicorp.com"
+  #email_address   = "dededanutza@gmail.com"
+  email_address   = "daniela@hashicorp.com"
 }
 
 resource "acme_certificate" "certificate" {
   account_key_pem              = acme_registration.reg.account_key_pem
-  common_name                  = "fdo-docker.${data.aws_route53_zone.zone.name}"
-  subject_alternative_names    = ["fdo-docker.${data.aws_route53_zone.zone.name}"]
-  #common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
-  #subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
+  #common_name                  = "fdo-docker.${data.aws_route53_zone.zone.name}"
+  #subject_alternative_names    = ["fdo-docker.${data.aws_route53_zone.zone.name}"]
+  common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
   disable_complete_propagation = true
 
   dns_challenge {
@@ -129,7 +129,7 @@ resource "aws_security_group" "securitygp" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.vpc.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -137,7 +137,7 @@ resource "aws_security_group" "securitygp" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.vpc.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
