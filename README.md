@@ -11,7 +11,9 @@ What do I need:
 - [X] Automate the installation of Docker on the EC2 instance
 - [X] Automate the adding of the certificates to the `/certs` folder
 - [X] Automate pulling the Docker container and install TFE with the `compose.yaml` file
-- [X] Add your license file to the repository folder and ignore it in the gitignore file 
+- [X] Add your license file to the repository folder and ignore it in the gitignore file
+- [ ] Add an output for the IP of my instance 
+- [ ] Add an output for the hostname of my instance
 - [ ] Create TFE initial user
 - [ ] External Services: Postgres & S3 bucket 
 

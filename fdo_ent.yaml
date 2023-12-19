@@ -46,6 +46,14 @@ write_files:
     permissions: '0640'
     path: /var/tmp/compose.yaml
   - content: |
+       {
+         "username": "dlavric",
+         "email": "daniela@hashicorp.com",
+         "password": "MyTFEpassword"
+       }
+    permissions: '0750'
+    path: /opt/tfe/payload-iact.json  
+  - content: |
        until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to install Docker" ; sleep 3 ; done 
 
        #uninstall any older docker versions
@@ -105,6 +113,29 @@ write_files:
        docker compose up --detach
     permissions: '0750'
     path: /var/tmp/install-tfe.sh
+  - content: |
+       #!/bin/bash
+       
+       #get iact token
+       if [ docker compose exec tfe tfe-health-check-status | tee health-check.txt | grep 'passed' ]
+         then
+         echo "TFE is up and running"
+         ${IACT_TOKEN}=$(docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee iact-token.txt)
+        
+         #create the first admin user
+
+        curl \
+           --header "Content-Type: application/json" \
+           --request POST \
+           --data @payload-iact.json \
+           https://${TFE_HOSTNAME}/admin/initial-admin-user?token=${IACT_TOKEN}
+       
+       else
+         echo "TFE is not yet running, waiting.."
+         sleep 120
+       fi
+    permissions: '0750'
+    path: /var/tmp/create-user.sh
 runcmd:
   - until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting for final steps" ; sleep 3 ; done 
   - sudo bash /var/tmp/install-docker.sh
