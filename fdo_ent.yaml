@@ -1,7 +1,8 @@
-#cloud-config
+---
 write_files:
-  - content: |
+  - content: >
       name: terraform-enterprise
+
       services:
         tfe:
           image: images.releases.hashicorp.com/hashicorp/terraform-enterprise:${tfe_version}
@@ -43,101 +44,127 @@ write_files:
       volumes:
         terraform-enterprise:
         terraform-enterprise-cache:
-    permissions: '0640'
+    permissions: "0640"
     path: /var/tmp/compose.yaml
   - content: |
-       {
-         "username": "dlavric",
-         "email": "daniela@hashicorp.com",
-         "password": "MyTFEpassword"
-       }
-    permissions: '0750'
-    path: /opt/tfe/payload-iact.json  
-  - content: |
-       until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to install Docker" ; sleep 3 ; done 
+      {
+        "username": "dlavric",
+        "email": "daniela@hashicorp.com",
+        "password": "MyTFEpassword"
+      }
+    permissions: "0750"
+    path: /opt/tfe/payload-iact.json
+  - content: >
+      until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to
+      install Docker" ; sleep 3 ; done 
 
-       #uninstall any older docker versions
-       sudo apt-get remove -y docker.io docker-doc docker-compose podman-docker containerd runc
 
-       #update the apt package
-       sudo apt-get update
-       sudo apt-get install ca-certificates curl gnupg
+      #uninstall any older docker versions
+      sudo apt-get remove -y docker.io docker-doc docker-compose podman-docker containerd runc
 
-       #add docker official GPG key
-       sudo install -m 0755 -d /etc/apt/keyrings
-       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-       sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-       #setup the repository
-       echo \
-       "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      #update the apt package
+      sudo apt-get update
+      sudo apt-get install ca-certificates curl gnupg
 
-       #update the apt package index
-       sudo apt-get update
 
-       #install Docker Engine, containerd, and Docker Compose latest version
-       sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    permissions: '0750'
+      #add docker official GPG key
+      sudo install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+
+      #setup the repository
+      echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+
+      #update the apt package index
+      sudo apt-get update
+
+
+      #install Docker Engine, containerd, and Docker Compose latest version
+      sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    permissions: "0750"
     path: /var/tmp/install-docker.sh
-  - content: |
-       until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to copy certs" ; sleep 3 ; done 
+  - content: >
+      until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting to copy
+      certs" ; sleep 3 ; done 
 
-       #create a new directory dedicated to tfe and to add the certs
-       mkdir -p /opt/tfe-fdo/certs
 
-       #install awscli to get the certs from S3 bucket
-       sudo apt-get -y install awscli
+      #create a new directory dedicated to tfe and to add the certs
+      mkdir -p /opt/tfe-fdo/certs
 
-       #copy the certs from S3 locally, to my tfe-fdo/certs folder
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
 
-       #copy the TFE FDO license to the tfe-fdo/ folder
-       sudo aws s3 cp s3://daniela-fdo-license/fdo-license.txt /opt/tfe-fdo/fdo-license.txt
+      #install awscli to get the certs from S3 bucket
+      sudo apt-get -y install awscli
 
-       #login to the Terraform Enterprise container image registry
-       cat /opt/tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
 
-       #pull the TFE image from the registry
-       docker pull images.releases.hashicorp.com/hashicorp/terraform-enterprise:v202312-1
+      #copy the certs from S3 locally, to my tfe-fdo/certs folder
+      sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
+      sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
+      sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
 
-       #copy compose file
-       cp /var/tmp/compose.yaml /opt/tfe-fdo
- 
-       #spin up TFE
-       pushd /opt/tfe-fdo
-       #mkdir -p /root/tfe-fdo
-       docker compose up --detach
-    permissions: '0750'
+
+      #copy the TFE FDO license to the tfe-fdo/ folder
+      sudo aws s3 cp s3://daniela-fdo-license/fdo-license.txt /opt/tfe-fdo/fdo-license.txt
+
+
+      #login to the Terraform Enterprise container image registry
+      cat /opt/tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
+
+
+      #pull the TFE image from the registry
+      docker pull images.releases.hashicorp.com/hashicorp/terraform-enterprise:v202312-1
+
+
+      #copy compose file
+      cp /var/tmp/compose.yaml /opt/tfe-fdo
+
+
+      #spin up TFE
+      pushd /opt/tfe-fdo
+      #mkdir -p /root/tfe-fdo
+      docker compose up --detach
+    permissions: "0750"
     path: /var/tmp/install-tfe.sh
-  - content: |
-       #!/bin/bash
-       
-       #get iact token
-       if [ docker compose exec tfe tfe-health-check-status | tee health-check.txt | grep 'passed' ]
-         then
-         echo "TFE is up and running"
-         ${IACT_TOKEN}=$(docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee iact-token.txt)
-        
-         #create the first admin user
+  - content: >
+      #!/bin/bash
 
-        curl \
-           --header "Content-Type: application/json" \
-           --request POST \
-           --data @payload-iact.json \
-           https://${TFE_HOSTNAME}/admin/initial-admin-user?token=${IACT_TOKEN}
+      # We have to wait for TFE be fully functioning before we can continue
+      while true; do
+          if curl -I "https://${tfe_hostname}/_health_check" 2>&1 | grep -w "200\|301" ; 
+          then
+              echo "TFE is up and running"
+              echo "Will continue in 1 minutes with the final steps"
+              sleep 60
+              break
+          else
+              echo "TFE is not available yet. Please wait..."
+              sleep 60
+          fi
+      done
+
+
+      #go to the tfe folder
+      pushd /opt/tfe-fdo
+
+
+      #get iact token
+      IACT_TOKEN=$(docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee iact-token.txt)
        
-       else
-         echo "TFE is not yet running, waiting.."
-         sleep 120
-       fi
-    permissions: '0750'
+      #create the first admin user
+       curl \
+          --header "Content-Type: application/json" \
+          --request POST \
+          --data @payload-iact.json \
+          https://${TFE_HOSTNAME}/admin/initial-admin-user?token=${IACT_TOKEN}
+    permissions: "0750"
     path: /var/tmp/create-user.sh
 runcmd:
-  - until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting for final steps" ; sleep 3 ; done 
+  - until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting for final steps" ; sleep 3 ; done
   - sudo bash /var/tmp/install-docker.sh
   - sudo bash /var/tmp/install-tfe.sh
 packages_update: true
