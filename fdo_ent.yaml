@@ -153,14 +153,14 @@ write_files:
 
 
       #get iact token
-      ${IACT_TOKEN}=$(docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee iact-token.txt)
+      $IACT_TOKEN=`docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee iact-token.txt`
        
       #create the first admin user
        curl \
           --header "Content-Type: application/json" \
           --request POST \
           --data @payload-iact.json \
-          https://${tfe_hostname}/admin/initial-admin-user?token=${IACT_TOKEN} | tee initial-admin-user.json
+          https://${tfe_hostname}/admin/initial-admin-user?token=$IACT_TOKEN | tee initial-admin-user.json
     permissions: "0750"
     path: /var/tmp/create-user.sh
 runcmd:
