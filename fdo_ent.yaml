@@ -109,7 +109,7 @@ write_files:
       {
         "username": "dlavric",
         "email": "daniela@hashicorp.com",
-        "passsword": "MyTFEpassword"
+        "passsword": "DanielaLavric"
       }
     permissions: '0750'
     path: /opt/tfe-fdo/payload-iact.json
