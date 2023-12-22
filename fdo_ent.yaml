@@ -109,7 +109,7 @@ write_files:
       {
         "username": "dlavric",
         "email": "daniela@hashicorp.com",
-        "passsword": "DanielaLavric"
+        "password": "DanielaLavric"
       }
     permissions: '0750'
     path: /opt/tfe-fdo/payload-iact.json
@@ -133,7 +133,7 @@ write_files:
       pushd /opt/tfe-fdo
 
       #get iact token
-      IACT_TOKEN=`docker exec -it terraform-enterprise-tfe-1 curl http://localhost:80/admin/retrieve-iact | tee /opt/tfe-fdo/iact-token.txt`
+      IACT_TOKEN=`docker compose exec tfe retrieve-iact | tee /opt/tfe-fdo/iact-token.txt`
 
       #create the first admin user
       curl -k \
@@ -147,6 +147,7 @@ runcmd:
   - until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting for final steps" ; sleep 3 ; done 
   - sudo bash /var/tmp/install-docker.sh
   - sudo bash /var/tmp/install-tfe.sh
+  - sudo bash /var/tmp/create-admin-user.sh
 packages_update: true
 packages:
   - unzip
