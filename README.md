@@ -14,7 +14,7 @@ What do I need:
 - [X] Add your license file to the repository folder and ignore it in the gitignore file
 - [ ] Add an output for the IP of my instance 
 - [ ] Add an output for the hostname of my instance
-- [ ] Create TFE initial user
+- [X] Create TFE initial user
 - [ ] External Services: Postgres & S3 bucket 
 
 
