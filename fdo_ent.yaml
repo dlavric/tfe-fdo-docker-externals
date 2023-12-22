@@ -105,10 +105,49 @@ write_files:
        docker compose up --detach
     permissions: '0750'
     path: /var/tmp/install-tfe.sh
+  - content: |
+      {
+        "username": "dlavric",
+        "email": "daniela@hashicorp.com",
+        "password": "DanielaLavric"
+      }
+    permissions: '0750'
+    path: /opt/tfe-fdo/payload-iact.json
+  - content: |
+      #!/bin/bash
+      #We have to wait for TFE be fully functioning before we can continue
+      while true; do
+          if curl -kI "https://${tfe_hostname}/admin" 2>&1 | grep -w "200\|301" ;
+          then
+              echo "TFE is up and running"
+              echo "Will continue in 1 minutes with the final steps"
+              sleep 60
+              break
+          else
+              echo "TFE is not available yet. Please wait..."
+              sleep 60
+          fi
+      done
+
+      #go to the tfe folder
+      pushd /opt/tfe-fdo
+
+      #get iact token
+      IACT_TOKEN=`docker compose exec tfe retrieve-iact | tee /opt/tfe-fdo/iact-token.txt`
+
+      #create the first admin user
+      curl -k \
+          --header "Content-Type: application/json" \
+          --request POST \
+          --data @/opt/tfe-fdo/payload-iact.json \
+          https://${tfe_hostname}/admin/initial-admin-user?token=$IACT_TOKEN | tee /opt/tfe-fdo/initial-admin-user.json
+    permissions: '0750'
+    path: /var/tmp/create-admin-user.sh   
 runcmd:
   - until ping -c1 archive.ubuntu.com &>/dev/null; do echo "waiting for final steps" ; sleep 3 ; done 
   - sudo bash /var/tmp/install-docker.sh
   - sudo bash /var/tmp/install-tfe.sh
+  - sudo bash /var/tmp/create-admin-user.sh
 packages_update: true
 packages:
   - unzip
