@@ -17,5 +17,7 @@ provider "aws" {
 
 provider "acme" {
   # Configuration options
-  server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  #server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  #generates untrusted certs
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
 }
