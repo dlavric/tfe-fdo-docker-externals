@@ -7,7 +7,7 @@ data "aws_route53_zone" "zone" {
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.zone.zone_id
   #name    = "fdo-docker.${data.aws_route53_zone.zone.name}"
-  name    = "daniela-docker.${data.aws_route53_zone.zone.name}"
+  name    = "daniela-docker1.${data.aws_route53_zone.zone.name}"
   type    = "A"
   ttl     = "300"
   #records = ["34.253.52.28"]
@@ -29,8 +29,8 @@ resource "acme_certificate" "certificate" {
   account_key_pem              = acme_registration.reg.account_key_pem
   #common_name                  = "fdo-docker.${data.aws_route53_zone.zone.name}"
   #subject_alternative_names    = ["fdo-docker.${data.aws_route53_zone.zone.name}"]
-  common_name                  = "daniela-docker.${data.aws_route53_zone.zone.name}"
-  subject_alternative_names    = ["daniela-docker.${data.aws_route53_zone.zone.name}"]
+  common_name                  = "daniela-docker1.${data.aws_route53_zone.zone.name}"
+  subject_alternative_names    = ["daniela-docker1.${data.aws_route53_zone.zone.name}"]
   disable_complete_propagation = true
 
   dns_challenge {
@@ -43,7 +43,7 @@ resource "acme_certificate" "certificate" {
 
 # Add my certificates to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket" {
-  bucket = "daniela-fdo-certs"
+  bucket = "daniela-fdo-certs1"
 
   tags = {
     Name        = "Daniela FDO Bucket"
@@ -60,7 +60,7 @@ resource "aws_s3_object" "object" {
 
 # Add my TFE FDO license to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket_license" {
-  bucket = "daniela-fdo-license"
+  bucket = "daniela-fdo-license1"
 
   tags = {
     Name        = "Daniela FDO License"
@@ -223,7 +223,8 @@ resource "aws_iam_role_policy" "daniela-policy" {
 
 # Create EC2 instance
 resource "aws_instance" "instance" {
-  ami                  = "ami-0694d931cee176e7d" # eu-west-1
+  #ami                  = "ami-0694d931cee176e7d" # eu-west-1
+  ami                  = "ami-0ff1c68c6e837b183" # eu-west-2 
   instance_type        = "t2.xlarge"
   iam_instance_profile = aws_iam_instance_profile.daniela-profile.name
 
@@ -231,7 +232,7 @@ resource "aws_instance" "instance" {
     cpu_credits = "unlimited"
   }
 
-  key_name = "daniela-fdo-key"
+  key_name = "daniela-fdo-key2"
 
   root_block_device {
     volume_size = 50

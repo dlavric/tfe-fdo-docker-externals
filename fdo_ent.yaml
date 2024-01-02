@@ -10,7 +10,7 @@ write_files:
             TFE_HOSTNAME: ${tfe_hostname}
             TFE_ENCRYPTION_PASSWORD: "encpassword"
             TFE_OPERATIONAL_MODE: "disk"
-            TFE_DISK_CACHE_VOLUME_NAME: daniela-project-compose_terraform-enterprise-cache
+            TFE_DISK_CACHE_VOLUME_NAME: $${COMPOSE_PROJECT_NAME}_terraform-enterprise-cache
             TFE_TLS_CERT_FILE: /etc/ssl/private/terraform-enterprise/cert.pem
             TFE_TLS_KEY_FILE: /etc/ssl/private/terraform-enterprise/key.pem
             TFE_TLS_CA_BUNDLE_FILE: /etc/ssl/private/terraform-enterprise/bundle.pem
@@ -83,12 +83,12 @@ write_files:
        sudo apt-get -y install awscli
 
        #copy the certs from S3 locally, to my tfe-fdo/certs folder
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
-       sudo aws s3 cp s3://daniela-fdo-certs/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
+       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
+       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
+       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
 
        #copy the TFE FDO license to the tfe-fdo/ folder
-       sudo aws s3 cp s3://daniela-fdo-license/fdo-license.txt /opt/tfe-fdo/fdo-license.txt
+       sudo aws s3 cp s3://daniela-fdo-license1/fdo-license.txt /opt/tfe-fdo/fdo-license.txt
 
        #login to the Terraform Enterprise container image registry
        cat /opt/tfe-fdo/fdo-license.txt | sudo docker login --username terraform images.releases.hashicorp.com --password-stdin
