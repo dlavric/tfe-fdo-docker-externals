@@ -83,8 +83,8 @@ write_files:
        sudo apt-get -y install awscli
 
        #copy the certs from S3 locally, to my tfe-fdo/certs folder
-       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/certificate_pem /opt/tfe-fdo/certs/cert.pem
-       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/issuer_pem /opt/tfe-fdo/certs/bundle.pem
+       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/full_chain /opt/tfe-fdo/certs/cert.pem
+       sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/full_chain /opt/tfe-fdo/certs/bundle.pem
        sudo aws s3 cp s3://daniela-fdo-certs1/ssl-certs/private_key_pem /opt/tfe-fdo/certs/key.pem
 
        #copy the TFE FDO license to the tfe-fdo/ folder

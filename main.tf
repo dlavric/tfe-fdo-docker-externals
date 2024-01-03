@@ -58,6 +58,12 @@ resource "aws_s3_object" "object" {
   content  = lookup(acme_certificate.certificate, "${each.key}")
 }
 
+resource "aws_s3_object" "object_full_chain" {
+  bucket  = aws_s3_bucket.s3bucket.bucket
+  key = "ssl-certs/full_chain"
+  content = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
+}
+
 # Add my TFE FDO license to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket_license" {
   bucket = "daniela-fdo-license1"
