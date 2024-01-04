@@ -66,7 +66,7 @@ resource "aws_s3_object" "object_full_chain" {
 
 # Add my TFE FDO license to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket_license" {
-  bucket = "daniela-fdo-license1"
+  bucket =var.license_bucket
 
   tags = {
     Name        = "Daniela FDO License"

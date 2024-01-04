@@ -20,15 +20,43 @@ What do I need:
 
 - Create a file `variables.auto.tfvars` with the following content
 ```hcl
-tfe_hostname = "daniela-docker"
-tfe_version  = "v202312-1"
+tfe_version      = "v202312-1"
+tfe_hostname     = "daniela-docker1.tf-support.hashicorpdemo.com"
+tfe_subdomain    = "daniela-docker1"
+tfe_domain       = "tf-support.hashicorpdemo.com"
+email            = "<your-email"
+username         = "dlavric"
+password         = "DanielaLavric"
+certs_bucket     = "daniela-fdo-certs1"
+license_bucket   = "daniela-fdo-license1"
+license_filename = "fdo-license.txt"
+key_pair         = "daniela-fdo-key2"
+enc_password     = "encpassword" 
 ```
 
 - Export AWS environment variables
-
 ```shell
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 export AWS_SESSION_TOKEN=
 export AWS_REGION="eu-west-1" 
+```
+
+- Download all the Terraform dependencies for modules and providers
+```
+terraform init
+```
+
+- Apply all the changes
+```
+terraform apply
+```
+
+- Wait a couple of minutes for TFE to become online
+
+- Access the TFE environment at the following URL: https://daniela-docker1.tf-support.hashicorpdemo.com
+
+- Destroy you infrastructure
+```
+terraform destroy
 ```
