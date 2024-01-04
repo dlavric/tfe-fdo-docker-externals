@@ -12,14 +12,16 @@ What do I need:
 - [X] Automate the adding of the certificates to the `/certs` folder
 - [X] Automate pulling the Docker container and install TFE with the `compose.yaml` file
 - [X] Add your license file to the repository folder and ignore it in the gitignore file
-- [ ] Add an output for the IP of my instance 
-- [ ] Add an output for the hostname of my instance
+- [X] Add more dynamic variables for easier maintenance of the repository
+- [X] Add an output for the IP of my instance 
+- [X] Add an output for the URL of my instance
 - [X] Create TFE initial user
 - [ ] External Services: Postgres & S3 bucket 
 
 
 - Create a file `variables.auto.tfvars` with the following content
 ```hcl
+aws_region       = "eu-west-2"
 tfe_version      = "v202312-1"
 tfe_hostname     = "daniela-docker1.tf-support.hashicorpdemo.com"
 tfe_subdomain    = "daniela-docker1"
@@ -39,7 +41,7 @@ enc_password     = "encpassword"
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 export AWS_SESSION_TOKEN=
-export AWS_REGION="eu-west-1" 
+export AWS_REGION= 
 ```
 
 - Download all the Terraform dependencies for modules and providers

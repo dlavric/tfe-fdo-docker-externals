@@ -1,3 +1,6 @@
+variable "aws_region" {
+  description = "TFE region where to deploy the resources"
+}
 variable "tfe_version" {
   description = "The TFE version release from https://developer.hashicorp.com/terraform/enterprise/releases"
 }
