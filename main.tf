@@ -1,15 +1,15 @@
 # DNS
 data "aws_route53_zone" "zone" {
-  name = "tf-support.hashicorpdemo.com"
+  name = var.tfe_domain
 }
 
 
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.zone.zone_id
   #name    = "fdo-docker.${data.aws_route53_zone.zone.name}"
-  name    = "daniela-docker1.${data.aws_route53_zone.zone.name}"
-  type    = "A"
-  ttl     = "300"
+  name = "${var.tfe_subdomain}.${data.aws_route53_zone.zone.name}"
+  type = "A"
+  ttl  = "300"
   #records = ["34.253.52.28"]
   records = [aws_eip.eip.public_ip]
 }
@@ -22,15 +22,15 @@ resource "tls_private_key" "private_key" {
 resource "acme_registration" "reg" {
   account_key_pem = tls_private_key.private_key.private_key_pem
   #email_address   = "dededanutza@gmail.com"
-  email_address   = "daniela@hashicorp.com"
+  email_address = var.email
 }
 
 resource "acme_certificate" "certificate" {
-  account_key_pem              = acme_registration.reg.account_key_pem
+  account_key_pem = acme_registration.reg.account_key_pem
   #common_name                  = "fdo-docker.${data.aws_route53_zone.zone.name}"
   #subject_alternative_names    = ["fdo-docker.${data.aws_route53_zone.zone.name}"]
-  common_name                  = "daniela-docker1.${data.aws_route53_zone.zone.name}"
-  subject_alternative_names    = ["daniela-docker1.${data.aws_route53_zone.zone.name}"]
+  common_name                  = "${var.tfe_subdomain}.${data.aws_route53_zone.zone.name}"
+  subject_alternative_names    = ["${var.tfe_subdomain}.${data.aws_route53_zone.zone.name}"]
   disable_complete_propagation = true
 
   dns_challenge {
@@ -43,7 +43,7 @@ resource "acme_certificate" "certificate" {
 
 # Add my certificates to a S3 Bucket
 resource "aws_s3_bucket" "s3bucket" {
-  bucket = "daniela-fdo-certs1"
+  bucket = var.certs_bucket
 
   tags = {
     Name        = "Daniela FDO Bucket"
@@ -60,7 +60,7 @@ resource "aws_s3_object" "object" {
 
 resource "aws_s3_object" "object_full_chain" {
   bucket  = aws_s3_bucket.s3bucket.bucket
-  key = "ssl-certs/full_chain"
+  key     = "ssl-certs/full_chain"
   content = "${acme_certificate.certificate.certificate_pem}${acme_certificate.certificate.issuer_pem}"
 }
 
@@ -76,8 +76,8 @@ resource "aws_s3_bucket" "s3bucket_license" {
 
 resource "aws_s3_object" "object_license" {
   bucket = aws_s3_bucket.s3bucket_license.bucket
-  key    = "fdo-license.txt"
-  source = "fdo-license.txt"
+  key    = var.license_filename
+  source = var.license_filename
 }
 
 # Create network
@@ -238,17 +238,23 @@ resource "aws_instance" "instance" {
     cpu_credits = "unlimited"
   }
 
-  key_name = "daniela-fdo-key2"
+  key_name = var.key_pair
 
   root_block_device {
     volume_size = 50
   }
 
   user_data = templatefile("fdo_ent.yaml", {
-    license      = "fdo-license.txt",
-    tfe_version  = var.tfe_version
-    tfe_hostname = var.tfe_hostname
-
+    license          = var.license_filename,
+    tfe_version      = var.tfe_version,
+    tfe_hostname     = var.tfe_hostname,
+    enc_password     = var.enc_password,
+    email            = var.email,
+    username         = var.username,
+    password         = var.password,
+    certs_bucket     = var.certs_bucket,
+    license_bucket   = var.license_bucket,
+    license_filename = var.license_filename
   })
 
   network_interface {
