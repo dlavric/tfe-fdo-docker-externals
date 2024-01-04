@@ -107,9 +107,9 @@ write_files:
     path: /var/tmp/install-tfe.sh
   - content: |
       {
-        "username": ${username},
-        "email": ${email},
-        "password": ${password}
+        "username": "${username}",
+        "email": "${email}",
+        "password": "${password}"
       }
     permissions: '0750'
     path: /opt/tfe-fdo/payload-iact.json
