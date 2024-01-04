@@ -2,22 +2,24 @@
 This repository will install TFE FDO Docker https://developer.hashicorp.com/terraform/enterprise/flexible-deployments/install/docker/install
 
 
+## Pre-requisites
 
-What do I need:
+- [X] [Terraform Enterprise License](https://www.hashicorp.com/products/terraform/pricing)
+- [X] [AWS Account](https://aws.amazon.com/free/?gclid=Cj0KCQiAy9msBhD0ARIsANbk0A9djPCZfMAnJJ22goFzJssB-b1RfMDf9XvUYa0NuQ8old01xs4u8wIaAts9EALw_wcB&trk=65c60aef-03ac-4364-958d-38c6ccb6a7f7&sc_channel=ps&ef_id=Cj0KCQiAy9msBhD0ARIsANbk0A9djPCZfMAnJJ22goFzJssB-b1RfMDf9XvUYa0NuQ8old01xs4u8wIaAts9EALw_wcB:G:s&s_kwcid=AL!4422!3!458573551357!e!!g!!aws%20account!10908848282!107577274535&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all)
+- [X] [Terraform](https://www.terraform.io/downloads)
 
-- [X] AWS Instance that has 4 CPU and 16GB minimum as per [official requirements](https://developer.hashicorp.com/terraform/enterprise/replicated/architecture/reference-architecture/aws#terraform-enterprise-server-ec2-via-auto-scaling-group)
-- [X] DNS hostname for the server
-- [X] Valid certificates created with Let's encrypt, [see this Github repo](https://github.com/dlavric/create-certificates) that will be incorporated here
-- [X] Automate the installation of Docker on the EC2 instance
-- [X] Automate the adding of the certificates to the `/certs` folder
-- [X] Automate pulling the Docker container and install TFE with the `compose.yaml` file
-- [X] Add your license file to the repository folder and ignore it in the gitignore file
-- [X] Add more dynamic variables for easier maintenance of the repository
-- [X] Add an output for the IP of my instance 
-- [X] Add an output for the URL of my instance
-- [X] Create TFE initial user
-- [ ] External Services: Postgres & S3 bucket 
 
+# Steps on how to use this repository
+
+- Clone this repository:
+```shell
+git clone git@github.com:dlavric/tfe-fdo-docker.git
+```
+
+- Go to the directory where the repository is stored:
+```shell
+cd tfe-fdo-docker
+```
 
 - Create a file `variables.auto.tfvars` with the following content
 ```hcl
@@ -62,3 +64,21 @@ terraform apply
 ```
 terraform destroy
 ```
+
+
+
+
+What do I need:
+
+- [X] AWS Instance that has 4 CPU and 16GB minimum as per [official requirements](https://developer.hashicorp.com/terraform/enterprise/replicated/architecture/reference-architecture/aws#terraform-enterprise-server-ec2-via-auto-scaling-group)
+- [X] DNS hostname for the server
+- [X] Valid certificates created with Let's encrypt, [see this Github repo](https://github.com/dlavric/create-certificates) that will be incorporated here
+- [X] Automate the installation of Docker on the EC2 instance
+- [X] Automate the adding of the certificates to the `/certs` folder
+- [X] Automate pulling the Docker container and install TFE with the `compose.yaml` file
+- [X] Add your license file to the repository folder and ignore it in the gitignore file
+- [X] Add more dynamic variables for easier maintenance of the repository
+- [X] Add an output for the IP of my instance 
+- [X] Add an output for the URL of my instance
+- [X] Create TFE initial user
+- [ ] External Services: Postgres & S3 bucket 
