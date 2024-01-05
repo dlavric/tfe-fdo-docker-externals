@@ -53,4 +53,26 @@ variable "enc_password" {
   description = "The encryption password for my TFE installation"
 }
 
+variable "db_identifier" {
+  description = "The DB identifier name"
+}
+
+variable "db_name" {
+  description = "The DB name"
+}
+
+variable "db_username" {
+  description = "The DB username"
+}
+
+variable "db_password" {
+  description = "The DB password"
+}
+
+
+
+
+
+
+
 

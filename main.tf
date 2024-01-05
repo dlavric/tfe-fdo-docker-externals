@@ -146,6 +146,14 @@ resource "aws_security_group" "securitygp" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "ssh-access"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     description = "egress-rule"
     from_port   = 0
@@ -268,8 +276,9 @@ resource "aws_instance" "instance" {
 
 }
 
-# Create External Services: Postgres 14.x DB
-resource "aws_s3_bucket" "s3bucket" {
+
+# Create External Services: AWS S3 Bucket
+resource "aws_s3_bucket" "s3bucket_data" {
   bucket = var.storage_bucket
 
   tags = {
@@ -278,16 +287,27 @@ resource "aws_s3_bucket" "s3bucket" {
   }
 }
 
-# Create External Services: AWS S3 Bucket
-resource "aws_db_instance" "daniela-db" {
-  allocated_storage    = 400
-  identifier           = "daniela-db-docker"
-  db_name              = "danieladb"
-  engine               = "postgres"
-  engine_version       = "14.9"
-  instance_class       = "db.m5.xlarge"
-  username             = "postgres"
-  password             = "dbpassword"
-  parameter_group_name = "default.postgres14"
-  skip_final_snapshot  = true
+# Create External Services: Postgres 14.x DB
+resource "aws_db_subnet_group" "db_subnet_group" {
+  name       = "daniela-db-subnetgroup"
+  subnet_ids = [aws_subnet.publicsub.id]
+
+  tags = {
+    Name = "daniela-db-subnet-group "
+  }
+}
+
+resource "aws_db_instance" "tfe-db" {
+  allocated_storage      = 400
+  identifier             = var.db_identifier
+  db_name                = var.db_name
+  engine                 = "postgres"
+  engine_version         = "14.9"
+  instance_class         = "db.m5.xlarge"
+  username               = var.db_username
+  password               = var.db_password
+  parameter_group_name   = "default.postgres14"
+  skip_final_snapshot    = true
+  db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
+  vpc_security_group_ids = [aws_security_group.securitygp.id]
 }

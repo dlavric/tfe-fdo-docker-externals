@@ -88,3 +88,5 @@ What do I need:
 - [X] Create TFE initial user
 - [ ] External Services: Postgres & S3 bucket
 - [ ] Create the Postgres DB in the same VPC/subnet as the EC2 instance
+- [ ] Allow traffic to and from port 5432 in the security group for the PostgresSQL DB
+- [ ] Modify the YAML Template to have an External Services configuration
