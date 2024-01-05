@@ -23,6 +23,8 @@ git clone git@github.com:dlavric/tfe-fdo-docker.git
 cd tfe-fdo-docker
 ```
 
+- Attach your TFE FDO License that you have purchased to the repository root folder
+
 - Create a file `variables.auto.tfvars` with the following content
 ```hcl
 aws_region       = "eu-west-2"
