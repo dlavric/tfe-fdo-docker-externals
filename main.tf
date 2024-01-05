@@ -262,7 +262,14 @@ resource "aws_instance" "instance" {
     password         = var.password,
     certs_bucket     = var.certs_bucket,
     license_bucket   = var.license_bucket,
-    license_filename = var.license_filename
+    license_filename = var.license_filename,
+    db_username      = var.db_username
+    db_password      = var.db_password
+    db_host          = aws_db_instance.tfe-db.endpoint
+    db_name          = var.db_name
+    storage_bucket   = var.storage_bucket
+    aws_region       = var.aws_region
+
   })
 
   network_interface {
