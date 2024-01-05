@@ -1,5 +1,7 @@
 # tfe-fdo-docker
-This repository will install TFE FDO Docker https://developer.hashicorp.com/terraform/enterprise/flexible-deployments/install/docker/install
+This repository will install TFE FDO on Docker in a Mounted Disk configuration on AWS infrastructure.
+
+Here is the [Terraform Enterprise official documentation](https://developer.hashicorp.com/terraform/enterprise/flexible-deployments/install/docker/install)
 
 
 ## Pre-requisites
