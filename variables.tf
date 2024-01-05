@@ -37,6 +37,10 @@ variable "license_bucket" {
   description = "The name of the S3 Bucket to save the license to"
 }
 
+variable "storage_bucket" {
+  description = "The name of the S3 Bucket to save all the TFE data to"
+}
+
 variable "license_filename" {
   description = "The name of the file that contains the TFE FDO License"
 }
