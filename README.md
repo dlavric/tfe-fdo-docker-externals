@@ -1,5 +1,5 @@
 # tfe-fdo-docker
-This repository will install TFE FDO on Docker in a Mounted Disk configuration on AWS infrastructure.
+This repository will install TFE FDO on Docker in External Services configuration on AWS infrastructure with Postgres 14.9 version.
 
 Here is the [Terraform Enterprise official documentation](https://developer.hashicorp.com/terraform/enterprise/flexible-deployments/install/docker/install)
 
@@ -32,7 +32,7 @@ tfe_version      = "v202312-1"
 tfe_hostname     = "daniela-docker1.tf-support.hashicorpdemo.com"
 tfe_subdomain    = "daniela-docker1"
 tfe_domain       = "tf-support.hashicorpdemo.com"
-email            = "<your.email@domain.com>"
+email            = "daniela@hashicorp.com"
 username         = "dlavric"
 password         = "DanielaLavric"
 certs_bucket     = "daniela-fdo-certs1"
@@ -40,7 +40,11 @@ license_bucket   = "daniela-fdo-license1"
 storage_bucket   = "daniela-fdo-storage"
 license_filename = "fdo-license.txt"
 key_pair         = "daniela-fdo-key2"
-enc_password     = "encpassword" 
+enc_password     = "encpassword"
+db_identifier    = "daniela-db-docker"
+db_name          = "danieladb"
+db_username      = "postgres"
+db_password      = "dbpassword"
 ```
 
 - Export AWS environment variables
@@ -52,13 +56,41 @@ export AWS_REGION=
 ```
 
 - Download all the Terraform dependencies for modules and providers
-```
+```shell
 terraform init
 ```
 
-- Apply all the changes
+- Verify the output is successfull
+```shell
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of hashicorp/tls from the dependency lock file
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Reusing previous version of vancluever/acme from the dependency lock file
+- Using previously-installed hashicorp/tls v4.0.5
+- Using previously-installed hashicorp/aws v5.26.0
+- Using previously-installed vancluever/acme v2.17.2
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
 ```
+
+- Apply all the changes
+```shell
 terraform apply
+```
+
+- Verify the output matches in number of resources
+```shell
+Plan: 26 to add, 0 to change, 0 to destroy.
 ```
 
 - Wait a couple of minutes for TFE to become online
@@ -66,8 +98,13 @@ terraform apply
 - Access the TFE environment at the following URL: https://daniela-docker1.tf-support.hashicorpdemo.com
 
 - Destroy you infrastructure
-```
+```shell
 terraform destroy
+```
+
+- Verify the output matches in number of resources
+```shell
+
 ```
 
 
@@ -86,5 +123,7 @@ What do I need:
 - [X] Add an output for the IP of my instance 
 - [X] Add an output for the URL of my instance
 - [X] Create TFE initial user
-- [ ] External Services: Postgres & S3 bucket
-- [ ] Create the Postgres DB in the same VPC/subnet as the EC2 instance
+- [X] External Services: Postgres & S3 bucket
+- [X] Create the Postgres DB in the same VPC/subnet as the EC2 instance
+- [X] Allow traffic to and from port 5432 in the security group for the PostgresSQL DB
+- [X] Modify the YAML Template to have an External Services configuration
