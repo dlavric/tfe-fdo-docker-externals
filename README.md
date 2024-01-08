@@ -1,5 +1,5 @@
 # tfe-fdo-docker
-This repository will install TFE FDO on Docker in a Mounted Disk configuration on AWS infrastructure.
+This repository will install TFE FDO on Docker in External Services configuration on AWS infrastructure with Postgres 14.9 version.
 
 Here is the [Terraform Enterprise official documentation](https://developer.hashicorp.com/terraform/enterprise/flexible-deployments/install/docker/install)
 
@@ -90,7 +90,7 @@ terraform apply
 
 - Verify the output matches in number of resources
 ```shell
-
+Plan: 26 to add, 0 to change, 0 to destroy.
 ```
 
 - Wait a couple of minutes for TFE to become online
@@ -123,7 +123,7 @@ What do I need:
 - [X] Add an output for the IP of my instance 
 - [X] Add an output for the URL of my instance
 - [X] Create TFE initial user
-- [ ] External Services: Postgres & S3 bucket
-- [ ] Create the Postgres DB in the same VPC/subnet as the EC2 instance
-- [ ] Allow traffic to and from port 5432 in the security group for the PostgresSQL DB
-- [ ] Modify the YAML Template to have an External Services configuration
+- [X] External Services: Postgres & S3 bucket
+- [X] Create the Postgres DB in the same VPC/subnet as the EC2 instance
+- [X] Allow traffic to and from port 5432 in the security group for the PostgresSQL DB
+- [X] Modify the YAML Template to have an External Services configuration

@@ -99,6 +99,16 @@ resource "aws_subnet" "publicsub" {
   }
 }
 
+resource "aws_subnet" "privatesub" {
+  vpc_id     = aws_vpc.vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "${var.aws_region}c"
+
+  tags = {
+    Name = "daniela-private-subnet"
+  }
+}
+
 
 resource "aws_internet_gateway" "internetgw" {
   vpc_id = aws_vpc.vpc.id
@@ -263,11 +273,11 @@ resource "aws_instance" "instance" {
     certs_bucket     = var.certs_bucket,
     license_bucket   = var.license_bucket,
     license_filename = var.license_filename,
-    db_username      = var.db_username
-    db_password      = var.db_password
-    db_host          = aws_db_instance.tfe-db.endpoint
-    db_name          = var.db_name
-    storage_bucket   = var.storage_bucket
+    db_username      = var.db_username,
+    db_password      = var.db_password,
+    db_host          = aws_db_instance.tfe-db.endpoint,
+    db_name          = var.db_name,
+    storage_bucket   = var.storage_bucket,
     aws_region       = var.aws_region
 
   })
@@ -297,7 +307,7 @@ resource "aws_s3_bucket" "s3bucket_data" {
 # Create External Services: Postgres 14.x DB
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "daniela-db-subnetgroup"
-  subnet_ids = [aws_subnet.publicsub.id]
+  subnet_ids = [aws_subnet.publicsub.id, aws_subnet.privatesub.id]
 
   tags = {
     Name = "daniela-db-subnet-group "
